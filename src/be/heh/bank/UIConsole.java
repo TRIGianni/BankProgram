@@ -2,27 +2,23 @@ package be.heh.bank;
 
 import java.util.*;
 
-public class BankProgram {
-   private HashMap<Integer,Integer> accounts = new HashMap<>();
-   private double rate = 0.01;
-   private int nextacct = 0;
+public class UIConsole {
    private int current = 0;
    private Scanner scanner;
    private boolean done = false;
+   private Bank bank;
 
-   public static void main(String[] args) {
-      BankProgram program = new BankProgram();
-      program.run();
+   public UIConsole(Scanner scanner, Bank bank) {
+      this.scanner = scanner;
+      this.bank = bank;
    }
 
-   private void run() {
-      scanner = new Scanner(System.in);
+   public void run() {
       while (!done) {
-         System.out.print("Enter command (0=quit, 1=new, 2=select, 3=deposit, 4=loan, 5=show, 6=interest): ");
+         System.out.print("Enter command (0=quit, 1=new, 2=select, 3=deposit, 4=loan, 5=show, 6=interest, 7=setforeign): ");
          int cnum = scanner.nextInt();
          processCommand(cnum);
       }
-      scanner.close();
    }
 
    private void processCommand(int cnum) {
@@ -33,6 +29,7 @@ public class BankProgram {
       else if (cnum == 4) authorizeLoan();
       else if (cnum == 5) showAll();
       else if (cnum == 6) addInterest();
+      else if (cnum == 7) setForeign();
       else
          System.out.println("illegal command");
    }
@@ -43,49 +40,48 @@ public class BankProgram {
    }
 
    private void newAccount() {
-      current = nextacct++;
-      accounts.put(current, 0);
+      boolean isforeign = requestForeign();
+      current = bank.newAccount(isforeign);
       System.out.println("Your new account number is " + current);
    }
 
    private void select() {
       System.out.print("Enter account#: ");
       current = scanner.nextInt();
-      int balance = accounts.get(current);
+      int balance = bank.getBalance(current);
       System.out.println("The balance of account " + current + " is " + balance);
    }
 
    private void deposit() {
       System.out.print("Enter deposit amount: ");
       int amt = scanner.nextInt();
-      int balance = accounts.get(current);
-      accounts.put(current, balance+amt);      
+      bank.deposit(current, amt);     
    }
 
    private void authorizeLoan() {
       System.out.print("Enter loan amount: ");
       int loanamt = scanner.nextInt();
-      int balance = accounts.get(current);
-      if (balance >= loanamt / 2)
+      if (bank.authorizeLoan(current, loanamt))
          System.out.println("Your loan is approved");
       else
          System.out.println("Your loan is denied");
    }
 
    private void showAll() {
-      Set<Integer> accts = accounts.keySet();
-      System.out.println("The bank has " + accts.size() + " accounts.");
-      for (int i : accts)
-         System.out.println("\tAccount " + i + ": balance=" + accounts.get(i));
+      System.out.println(bank.toString());
    }
 
    private void addInterest() {
-      Set<Integer> accts = accounts.keySet();
-      for (int i : accts) {
-         int balance = accounts.get(i);
-         int newbalance = (int) (balance * (1 + rate));
-         accounts.put(i, newbalance);
-      }
+      bank.addInterest();
+   }
+
+   private void setForeign() {
+      bank.setForeign(current, requestForeign());      
+   }
+
+   private boolean requestForeign() {
+      System.out.print("Enter 1 for foreign, 2 for domestic: ");
+      int val = scanner.nextInt();
+      return val == 1;    
    }
 }
-

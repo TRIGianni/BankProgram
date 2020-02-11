@@ -1,0 +1,12 @@
+Dans le dossier src
+-------------------
+1) javac -d ../classes be/heh/bank/BankProgram.java
+
+Dans le dossier classes
+-----------------------
+
+2) Créer le fichier JAR
+# jar -cvmf manifest.txt BankApp.jar be
+
+3) Exécuter le fichier JAR
+# jar -tf BankApp.jar
