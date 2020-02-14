@@ -1,4 +1,5 @@
 package be.heh.bank;
+package be.heh.bank.core;
 
 import java.util.*;
 

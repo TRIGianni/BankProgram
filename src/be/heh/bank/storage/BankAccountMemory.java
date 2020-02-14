@@ -1,4 +1,5 @@
 package be.heh.bank;
+package be.heh.bank.storage;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,4 +1,5 @@
 package be.heh.bank;
+package be.heh.bank.core;
 
 public class BankAccount {
    private double rate = 0.01;
